@@ -6,7 +6,7 @@ async function getTasks(req, res) {
   try {
     logger.debug('Getting Tasks')
     const filterBy = {
-      txt: req.query.txt || ''
+      txt: req.query.txt || '',
     }
     const tasks = await taskService.query(filterBy)
     res.json(tasks)
@@ -28,7 +28,7 @@ async function getTaskById(req, res) {
 }
 
 async function addTask(req, res) {
-  const {loggedinUser} = req
+  const { loggedinUser } = req
 
   try {
     const task = req.body
@@ -41,7 +41,6 @@ async function addTask(req, res) {
   }
 }
 
-
 async function updateTask(req, res) {
   try {
     const task = req.body
@@ -50,7 +49,18 @@ async function updateTask(req, res) {
   } catch (err) {
     logger.error('Failed to update task', err)
     res.status(500).send({ err: 'Failed to update task' })
+  }
+}
 
+async function performTask(req, res) {
+  try {
+    const task = req.body
+    task._id = req.params.id
+    const perfomedTask = await taskService.perform(task)
+    res.json(perfomedTask)
+  } catch (error) {
+    logger.error('Failed to perform task', err)
+    res.status(500).send({ err: 'Failed to perform task' })
   }
 }
 
@@ -66,34 +76,32 @@ async function removeTask(req, res) {
 }
 
 async function addTaskMsg(req, res) {
-  const {loggedinUser} = req
+  const { loggedinUser } = req
   try {
     const taskId = req.params.id
     const msg = {
       txt: req.body.txt,
-      by: loggedinUser
+      by: loggedinUser,
     }
     const savedMsg = await taskService.addTaskMsg(taskId, msg)
     res.json(savedMsg)
   } catch (err) {
     logger.error('Failed to update task', err)
     res.status(500).send({ err: 'Failed to update task' })
-
   }
 }
 
 async function removeTaskMsg(req, res) {
-  const {loggedinUser} = req
+  const { loggedinUser } = req
   try {
     const taskId = req.params.id
-    const {msgId} = req.params
+    const { msgId } = req.params
 
     const removedId = await taskService.removeTaskMsg(taskId, msgId)
     res.send(removedId)
   } catch (err) {
     logger.error('Failed to remove task msg', err)
     res.status(500).send({ err: 'Failed to remove task msg' })
-
   }
 }
 
@@ -103,6 +111,7 @@ module.exports = {
   addTask,
   updateTask,
   removeTask,
+  performTask,
   addTaskMsg,
-  removeTaskMsg
+  removeTaskMsg,
 }
