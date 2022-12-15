@@ -24,46 +24,10 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
-function generateRandomName() {
-  const names = [
-    'Jhon',
-    'Wick',
-    'Strong',
-    'Dude',
-    'Yep',
-    'Hello',
-    'World',
-    'Power',
-    'Goku',
-    'Super',
-    'Hi',
-    'You',
-    'Are',
-    'Awesome',
-  ]
-  const famName = [
-    'star',
-    'kamikaza',
-    'family',
-    'eat',
-    'some',
-    'banana',
-    'brock',
-    'david',
-    'gun',
-    'walk',
-    'talk',
-    'car',
-    'wing',
-    'yang',
-    'snow',
-    'fire'
-  ]
-  return (
-    names[Math.floor(Math.random() * names.length)] +
-    famName[Math.floor(Math.random() * names.length)]
-  )
+function deepCopy(value) {
+  return JSON.parse(JSON.stringify(value))
 }
+
 
 function generateRandomImg() {
   //try to get diff img every time
@@ -101,7 +65,7 @@ module.exports = {
   makeId,
   getRandomInt,
   debounce,
-  generateRandomName,
+  deepCopy,
   timeAgo,
-  generateRandomImg,
+  generateRandomImg
 }
