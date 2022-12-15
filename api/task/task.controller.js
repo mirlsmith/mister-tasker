@@ -32,7 +32,6 @@ async function addTask(req, res) {
 
   try {
     const task = req.body
-    task.owner = loggedinUser
     const addedTask = await taskService.add(task)
     res.json(addedTask)
   } catch (err) {
