@@ -1,20 +1,29 @@
 const express = require('express')
 const { log } = require('../../middlewares/logger.middleware')
-const { getTasks, getTaskById, addTask, updateTask, removeTask, performTask, addTaskMsg, removeTaskMsg, generateTasks } = require('./task.controller')
+const controller = require('./task.controller')
 const router = express.Router()
 
 // middleware that is specific to this router
 // router.use(requireAuth)
 
-router.get('/', log, getTasks)
-router.get('/:id', getTaskById)
-router.post('/generate', generateTasks)
-router.post('/', addTask)
-router.put('/:id', updateTask)
-router.delete('/:id', removeTask)
-router.put('/:id/start', performTask)
+router.get('/', log, controller.getTasks)
 
-router.post('/:id/msg', addTaskMsg)
-router.delete('/:id/msg/:msgId', removeTaskMsg)
+router.get('/:id', controller.getTaskById)
+
+router.post('/generate', controller.generateTasks)
+
+router.post('/', controller.addTask)
+
+router.put('/:id', controller.updateTask)
+
+router.delete('/:id', controller.removeTask)
+
+router.delete('/', controller.removeAllTasks)
+
+router.put('/:id/start', controller.performTask)
+
+router.post('/:id/msg', controller.addTaskMsg)
+
+router.delete('/:id/msg/:msgId', controller.removeTaskMsg)
 
 module.exports = router

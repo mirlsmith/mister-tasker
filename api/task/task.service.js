@@ -41,6 +41,16 @@ async function remove(taskId) {
   }
 }
 
+async function removeAll() {
+  try {
+    const collection = await dbService.getCollection('task')
+    return await collection.deleteMany({})
+  } catch (err) {
+    logger.error(`cannot remove all task`, err)
+    throw err
+  }
+}
+
 async function add(task) {
   try {
     const collection = await dbService.getCollection('task')
@@ -171,5 +181,6 @@ module.exports = {
   perform,
   addTaskMsg,
   removeTaskMsg,
-  generateTasks
+  generateTasks,
+  removeAll
 }

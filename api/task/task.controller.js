@@ -85,6 +85,16 @@ async function removeTask(req, res) {
   }
 }
 
+async function removeAllTasks(req, res) {
+  try {
+    await taskService.removeAll()
+    res.end()
+  } catch (err) {
+    logger.error('Failed to remove task', err)
+    res.status(500).send({ err: 'Failed to remove task' })
+  }
+}
+
 async function addTaskMsg(req, res) {
   const { loggedinUser } = req
   try {
@@ -124,5 +134,6 @@ module.exports = {
   performTask,
   addTaskMsg,
   removeTaskMsg,
-  generateTasks
+  generateTasks,
+  removeAllTasks
 }
