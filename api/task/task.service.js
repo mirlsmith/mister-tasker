@@ -12,7 +12,7 @@ async function query(filterBy = { title: '' }) {
     const collection = await dbService.getCollection('task')
     // var tasks = await collection.find(criteria).toArray()
     var tasks = await collection.find({}).toArray()
-    return tasks
+    return tasks.map(_mapTask)
   } catch (err) {
     logger.error('cannot find tasks', err)
     throw err
@@ -23,7 +23,7 @@ async function getById(taskId) {
   try {
     const collection = await dbService.getCollection('task')
     const task = collection.findOne({ _id: ObjectId(taskId) })
-    return task
+    return _mapTask(task)
   } catch (err) {
     logger.error(`while finding task ${taskId}`, err)
     throw err
@@ -55,7 +55,7 @@ async function add(task) {
   try {
     const collection = await dbService.getCollection('task')
     await collection.insertOne(task)
-    return task
+    return _mapTask(task)
   } catch (err) {
     logger.error('cannot insert task', err)
     throw err
@@ -67,7 +67,7 @@ async function generateTasks(count) {
     const tasks = _generateTasks(count)
     const collection = await dbService.getCollection('task')
     await collection.insertMany(tasks)
-    return tasks
+    return tasks.map(_mapTask)
   } catch (err) {
     logger.error('cannot insert task', err)
     throw err
@@ -89,7 +89,7 @@ async function update(task) {
       { _id: ObjectId(task._id) },
       { $set: taskToSave }
     )
-    return task
+    return _mapTask(task)
   } catch (err) {
     logger.error(`cannot update task ${taskId}`, err)
     throw err
@@ -117,10 +117,10 @@ async function perform(task) {
         await update(task)
     } finally {
         // TODO: update task lastTried, triesCount and save to DB
-        task.lastTried = Date.now()
+        task.lastTriedAt = Date.now()
         task.triesCount++
         await update(task)
-        return task
+        return _mapTask(task)
     }
 }
 
@@ -170,6 +170,15 @@ function _generateTask() {
 function _generateTasks(count) {
   return new Array(count)
     .fill(null).map(() => _generateTask())
+}
+
+function _mapTask(task) {
+  if (!task._id) return task
+  return {
+    ...task,
+    createdAt: ObjectId(task._id).getTimestamp(),
+  }
+
 }
 
 module.exports = {
