@@ -52,6 +52,18 @@ async function add(task) {
   }
 }
 
+async function generateTasks(count) {
+  try {
+    const tasks = _generateTasks(count)
+    const collection = await dbService.getCollection('task')
+    await collection.insertMany(tasks)
+    return tasks
+  } catch (err) {
+    logger.error('cannot insert task', err)
+    throw err
+  }
+}
+
 async function update(task) {
   try {
     // const taskToSave = {
@@ -131,6 +143,25 @@ async function removeTaskMsg(taskId, msgId) {
   }
 }
 
+function _generateTask() {
+  const task = {
+    title: utilService.makeLorem(5),
+    status: 'new',
+    description: utilService.makeLorem(10),
+    importance: utilService.getRandomInt(1, 3),
+    lastTriedAt: 0,
+    triesCount: 0,
+    doneAt: 0,
+    errors: []
+  }
+  return task
+}
+
+function _generateTasks(count) {
+  return new Array(count)
+    .fill(null).map(() => _generateTask())
+}
+
 module.exports = {
   remove,
   query,
@@ -140,4 +171,5 @@ module.exports = {
   perform,
   addTaskMsg,
   removeTaskMsg,
+  generateTasks
 }

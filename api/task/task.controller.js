@@ -40,6 +40,17 @@ async function addTask(req, res) {
   }
 }
 
+async function generateTasks(req, res) {
+  try {
+    const { count } = req.body
+    const generatedTasks = await taskService.generateTasks(+count)
+    res.json(generatedTasks)
+  } catch (err) {
+    logger.error('Failed to generate tasks', err)
+    res.status(500).send({ err: 'Failed to generate tasks' })
+  }
+}
+
 async function updateTask(req, res) {
   try {
     const task = req.body
@@ -113,4 +124,5 @@ module.exports = {
   performTask,
   addTaskMsg,
   removeTaskMsg,
+  generateTasks
 }
