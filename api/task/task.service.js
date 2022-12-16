@@ -96,13 +96,13 @@ async function perform(task) {
         await externalService.execute(task)
 
         // TODO: update task for success (doneAt, status)
-        task.status = 'success'
+        task.status = 'done'
         task.doneAt = Date.now()
         await update(task)
     } catch (error) {
         // TODO: update task for error: status, errors
         console.log('error from execute', error);
-        task.status = 'errors'
+        task.status = 'failed'
         task.errors.push(error)
         await update(task)
     } finally {
