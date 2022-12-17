@@ -6,6 +6,7 @@ runWorker()
 
 function toggleWorker() {
     isWorkerOn = !isWorkerOn
+    if (isWorkerOn) runWorker()
     return isWorkerOn
 }
 
