@@ -1,5 +1,8 @@
 const logger = require('./logger.service')
 
+const SOCKET_EMIT_WORKER_TASK_STARTED = 'worker-task-started'
+const SOCKET_EMIT_WORKER_TASK_ENDED = 'worker-task-ended'
+
 var gIo = null
 
 function setupSocketAPI(http) {
@@ -66,24 +69,29 @@ async function emitToUser({ type, data, userId }) {
 
 // If possible, send to all sockets BUT not the current socket 
 // Optionally, broadcast to a room / to all
-async function broadcast({ type, data, room = null, userId }) {
-    userId = userId.toString()
+// async function broadcast({ type, data, room = null, userId }) {
+//     userId = userId.toString()
     
+//     logger.info(`Broadcasting event: ${type}`)
+//     const excludedSocket = await _getUserSocket(userId)
+//     if (room && excludedSocket) {
+//         logger.info(`Broadcast to room ${room} excluding user: ${userId}`)
+//         excludedSocket.broadcast.to(room).emit(type, data)
+//     } else if (excludedSocket) {
+//         logger.info(`Broadcast to all excluding user: ${userId}`)
+//         excludedSocket.broadcast.emit(type, data)
+//     } else if (room) {
+//         logger.info(`Emit to room: ${room}`)
+//         gIo.to(room).emit(type, data)
+//     } else {
+//         logger.info(`Emit to all`)
+//         gIo.emit(type, data)
+//     }
+// }
+async function broadcast({ type, data }) {
     logger.info(`Broadcasting event: ${type}`)
-    const excludedSocket = await _getUserSocket(userId)
-    if (room && excludedSocket) {
-        logger.info(`Broadcast to room ${room} excluding user: ${userId}`)
-        excludedSocket.broadcast.to(room).emit(type, data)
-    } else if (excludedSocket) {
-        logger.info(`Broadcast to all excluding user: ${userId}`)
-        excludedSocket.broadcast.emit(type, data)
-    } else if (room) {
-        logger.info(`Emit to room: ${room}`)
-        gIo.to(room).emit(type, data)
-    } else {
-        logger.info(`Emit to all`)
-        gIo.emit(type, data)
-    }
+    logger.info(`Emit to all`)
+    gIo.emit(type, data)
 }
 
 async function _getUserSocket(userId) {
@@ -116,4 +124,6 @@ module.exports = {
     // Send to all sockets BUT not the current socket - if found
     // (otherwise broadcast to a room / to all)
     broadcast,
+    SOCKET_EMIT_WORKER_TASK_STARTED,
+    SOCKET_EMIT_WORKER_TASK_ENDED
 }

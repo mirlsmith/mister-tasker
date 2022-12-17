@@ -1,6 +1,7 @@
 const dbService = require('../../services/db.service')
 const logger = require('../../services/logger.service')
 const utilService = require('../../services/util.service')
+const socketService = require('../../services/socket.service')
 const externalService = require('../../services/external.service')
 const ObjectId = require('mongodb').ObjectId
 
@@ -102,6 +103,10 @@ async function perform(task) {
     // TODO: update task status to running and save to DB
     task.status = 'running'
     await update(task)
+    socketService.broadcast({
+      type: socketService.SOCKET_EMIT_WORKER_TASK_STARTED,
+      data: task
+    })
 
     // TODO: execute the task using: externalService.execute
     await externalService.execute(task)
@@ -121,6 +126,10 @@ async function perform(task) {
     task.lastTriedAt = Date.now()
     task.triesCount++
     await update(task)
+    socketService.broadcast({
+      type: socketService.SOCKET_EMIT_WORKER_TASK_ENDED,
+      data: task
+    })
     return _mapTask(task)
   }
 }

@@ -1,7 +1,8 @@
-const ObjectId = require('mongodb').ObjectId
 const taskService = require('./task.service.js')
 
 var isWorkerOn = true
+
+runWorker()
 
 function toggleWorker() {
     isWorkerOn = !isWorkerOn
@@ -16,7 +17,7 @@ async function runWorker() {
     const task = await _getNextTask()
     if (task) {
       try {
-        await perform(task)
+        await taskService.perform(task)
       } catch (err) {
         console.log(`Failed Task`, err)
       } finally {
@@ -33,10 +34,18 @@ async function runWorker() {
 }
 
 async function _getNextTask() {
-  const tasks = await query()
+  const tasks = await taskService.query()
+  let filteredTasks = tasks.filter(task => (
+    (task.status !== 'done' || task.status !== 'running') &&
+    task.triesCount < 5
+  ))
+  filteredTasks.sort((taskA, taskB) => {
+    if (taskA.importance > taskB.importance) return -1
+    else if (taskA.importance < taskB.importance) return 1
+    else return taskA.triesCount > taskB.triesCount ? 1 : -1
+  })
 
-  console.log('tasks', tasks)
-  return tasks[0]
+  return filteredTasks[0]
 }
 
 module.exports = {
