@@ -90,8 +90,8 @@ async function removeAllTasks(req, res) {
     await taskService.removeAll()
     res.end()
   } catch (err) {
-    logger.error('Failed to remove task', err)
-    res.status(500).send({ err: 'Failed to remove task' })
+    logger.error('Failed to remove tasks', err)
+    res.status(500).send({ err: 'Failed to remove tasks' })
   }
 }
 
