@@ -176,7 +176,7 @@ function _mapTask(task) {
   if (!task._id) return task
   return {
     ...task,
-    createdAt: ObjectId(task._id).getTimestamp().getTime(), //looks like this doesn't return a timestamp. how can we get a timestamp?
+    createdAt: ObjectId(task._id).getTimestamp().getTime(), 
   }
 
 }
