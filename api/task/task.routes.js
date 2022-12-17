@@ -22,6 +22,8 @@ router.delete('/', controller.removeAllTasks)
 
 router.put('/:id/start', controller.performTask)
 
+router.put('/workerToggle', controller.toggleWorker)
+
 router.post('/:id/msg', controller.addTaskMsg)
 
 router.delete('/:id/msg/:msgId', controller.removeTaskMsg)

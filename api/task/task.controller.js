@@ -1,4 +1,5 @@
 const taskService = require('./task.service.js')
+const workerService = require('./worker.service.js')
 
 const logger = require('../../services/logger.service')
 
@@ -74,6 +75,21 @@ async function performTask(req, res) {
   }
 }
 
+function toggleWorker(req, res) {
+  try {
+    // const task = req.body
+    // task._id = req.params.id
+    // const perfomedTask = await taskService.runWorker()
+    // res.json(perfomedTask)
+    console.log('toggling worker');
+    const isWorkerOn = workerService.toggleWorker()
+    res.json({isWorkerOn})
+  } catch (error) {
+    logger.error('Failed to toggle the worker', err)
+    res.status(500).send({ err: 'Failed to toggle the worker' })
+  }
+}
+
 async function removeTask(req, res) {
   try {
     const taskId = req.params.id
@@ -132,6 +148,7 @@ module.exports = {
   updateTask,
   removeTask,
   performTask,
+  toggleWorker,
   addTaskMsg,
   removeTaskMsg,
   generateTasks,

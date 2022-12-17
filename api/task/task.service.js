@@ -4,6 +4,7 @@ const utilService = require('../../services/util.service')
 const externalService = require('../../services/external.service')
 const ObjectId = require('mongodb').ObjectId
 
+
 async function query(filterBy = { title: '' }) {
   try {
     const criteria = {
@@ -98,30 +99,30 @@ async function update(task) {
 
 async function perform(task) {
   try {
-        // TODO: update task status to running and save to DB
-        task.status = 'running'
-        await update(task)
+    // TODO: update task status to running and save to DB
+    task.status = 'running'
+    await update(task)
 
-        // TODO: execute the task using: externalService.execute
-        await externalService.execute(task)
+    // TODO: execute the task using: externalService.execute
+    await externalService.execute(task)
 
-        // TODO: update task for success (doneAt, status)
-        task.status = 'done'
-        task.doneAt = Date.now()
-        await update(task)
-    } catch (error) {
-        // TODO: update task for error: status, errors
-        console.log('error from execute', error);
-        task.status = 'failed'
-        task.errors.push(error)
-        await update(task)
-    } finally {
-        // TODO: update task lastTried, triesCount and save to DB
-        task.lastTriedAt = Date.now()
-        task.triesCount++
-        await update(task)
-        return _mapTask(task)
-    }
+    // TODO: update task for success (doneAt, status)
+    task.status = 'done'
+    task.doneAt = Date.now()
+    await update(task)
+  } catch (error) {
+    // TODO: update task for error: status, errors
+    console.log('error from execute', error)
+    task.status = 'failed'
+    task.errors.push(error)
+    await update(task)
+  } finally {
+    // TODO: update task lastTried, triesCount and save to DB
+    task.lastTriedAt = Date.now()
+    task.triesCount++
+    await update(task)
+    return _mapTask(task)
+  }
 }
 
 async function addTaskMsg(taskId, msg) {
@@ -162,24 +163,23 @@ function _generateTask() {
     lastTriedAt: 0,
     triesCount: 0,
     doneAt: 0,
-    errors: []
+    errors: [],
   }
   return task
 }
 
 function _generateTasks(count) {
-  return new Array(count)
-    .fill(null).map(() => _generateTask())
+  return new Array(count).fill(null).map(() => _generateTask())
 }
 
 function _mapTask(task) {
   if (!task._id) return task
   return {
     ...task,
-    createdAt: ObjectId(task._id).getTimestamp().getTime(), 
+    createdAt: ObjectId(task._id).getTimestamp().getTime(),
   }
-
 }
+
 
 module.exports = {
   remove,
@@ -191,5 +191,5 @@ module.exports = {
   addTaskMsg,
   removeTaskMsg,
   generateTasks,
-  removeAll
+  removeAll,
 }
