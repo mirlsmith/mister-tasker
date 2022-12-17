@@ -12,7 +12,7 @@ function toggleWorker() {
 async function runWorker() {
   // The isWorkerOn is toggled by the button: "Start/Stop Task Worker"
   if (!isWorkerOn) return
-  var delay = 5000
+  var delay = 3000
   try {
     const task = await _getNextTask()
     if (task) {
@@ -35,9 +35,10 @@ async function runWorker() {
 
 async function _getNextTask() {
   const tasks = await taskService.query()
-  let filteredTasks = tasks.filter(task => (
-    (task.status !== 'done' || task.status !== 'running') &&
-    task.triesCount < 5
+  const filteredTasks = tasks.filter(task => (
+    task.triesCount < 5 &&
+    task.status !== 'done' &&
+    task.status !== 'running'
   ))
   filteredTasks.sort((taskA, taskB) => {
     if (taskA.importance > taskB.importance) return -1
