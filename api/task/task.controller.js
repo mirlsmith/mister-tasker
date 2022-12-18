@@ -6,10 +6,7 @@ const logger = require('../../services/logger.service')
 async function getTasks(req, res) {
   try {
     logger.debug('Getting Tasks')
-    const filterBy = {
-      txt: req.query.txt || '',
-    }
-    const tasks = await taskService.query(filterBy)
+    const tasks = await taskService.query(req.query)
     res.json(tasks)
   } catch (err) {
     logger.error('Failed to get tasks', err)

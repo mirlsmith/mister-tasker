@@ -8,13 +8,13 @@ const ObjectId = require('mongodb').ObjectId
 
 async function query(filterBy = { text: '' }) {
   try {
-    // const criteria = {
-    //   title: { $regex: filterBy.title, $options: 'i' },
-    // }
     const collection = await dbService.getCollection('task')
-    // var tasks = await collection.find(criteria).toArray()
-    const searchText = filterBy.text
-    const criteria = searchText? { $text: { $search: searchText } } : {}
+    let criteria = {}
+
+    if (filterBy.text) {
+      criteria = { $text: { $search: filterBy.text }}
+    }
+
     const tasks = await collection.find(criteria).toArray()
     return tasks.map(_mapTask)
   } catch (err) {
